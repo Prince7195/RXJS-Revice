@@ -1,11 +1,12 @@
-import { AsyncSubject } from "rxjs/AsyncSubject";
+import { ReplaySubject } from "rxjs/ReplaySubject";
 
-// AsyncSubject - returns values to observables only after it completes - subject.complete()
-var subject = new AsyncSubject();
+// ReplaySubject(numberofEventsToEmit, BufferTime)
+var subject = new ReplaySubject(20, 500);
 
 var subscriber = subject.subscribe(
     data => addItem(`Subscriber 1: ${data}`),
-    () => addItem("Completed 1")
+    err => addItem(err),
+    () => addItem("Completed")
 );
 
 var i = 1;
@@ -15,9 +16,8 @@ setTimeout(() => {
     var subscriber2 = subject.subscribe(
         data => addItem(`Subscriber 2: ${data}`),
         err => addItem(err),
-        () => addItem("Completed 2")
+        () => addItem("Completed")
     );
-    subject.complete();
 }, 500);
 
 function addItem(val: any) {
